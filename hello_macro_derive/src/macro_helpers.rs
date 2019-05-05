@@ -20,7 +20,7 @@ pub fn expand_summable_fields(ast: &syn::DeriveInput) -> TokenStream {
   let body = &ast.data;
   let size = match body {
     syn::Data::Struct(ref item) => item.fields.iter().len(),
-    _ => panic!("at disco"),
+    _ => panic!("Only Struct is allowed"),
   };
   let gen = quote! {
       impl CountStruct for #identifier {
