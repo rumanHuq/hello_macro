@@ -1,27 +1,22 @@
+
+mod macro_helpers;
 extern crate proc_macro;
 
-use crate::proc_macro::TokenStream;
-use quote::quote;
+use macro_helpers::{expand_summable_fields, impl_hello_macro};
+use proc_macro::TokenStream;
 use syn;
 
 #[proc_macro_derive(HelloMacro)]
 pub fn hello_macro_derive(input: TokenStream) -> TokenStream {
-    // Construct a representation of Rust code as a syntax tree
-    // that we can manipulate
-    let ast = syn::parse(input).unwrap();
+  // Construct a representation of Rust code as a syntax tree
+  // that we can manipulate
+  let ast = syn::parse(input).unwrap();
 
-    // Build the trait implementation
-    impl_hello_macro(&ast)
+  // Build the trait implementation
+  impl_hello_macro(&ast)
 }
-
-fn impl_hello_macro(ast: &syn::DeriveInput) -> TokenStream {
-    let identifier = &ast.ident;
-    let gen = quote! {
-        impl HelloMacro for #identifier {
-            fn hello_macro() {
-                println!("Hello, Macro! My name is {}", stringify!(#identifier));
-            }
-        }
-    };
-    gen.into()
+#[proc_macro_derive(CountStruct)]
+pub fn count_struct_derive(input: TokenStream) -> TokenStream {
+  let ast = syn::parse(input).expect("failed to parse input into `syn::Item`");
+  expand_summable_fields(&ast)
 }
